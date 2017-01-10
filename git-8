@@ -1,0 +1,88 @@
+#!/bin/sh
+
+
+# global variables
+
+BR_MASTER="git8.branch.master"
+BR_DEVELOP="git8.branch.develop"
+UTIL_TAG_DATE="git8.utils.date"
+
+
+usage() {
+	echo "git-8 (git-eightpercent)"
+	echo "에잇퍼센트 브랜치 관리용 도구입니다."
+}
+
+help_init() {
+	TEXT="\
+init: 에잇퍼센트용 관리 도구를 설정합니다.
+
+--convention	: 기본 설정을 로컬 저장소에 저장합니다.(기본값)
+--config	: 설정을 하나씩 맞출 수 있습니다.
+"
+	echo "$TEXT"
+}
+
+init() {
+	git rev-parse &> /dev/null
+	if [ $? -ne 0 ]
+	then
+		echo "should be git repo"
+		exit 2
+	fi
+
+	git config --local $BR_MASTER master
+	git config --local $BR_DEVELOP develop
+	git config --local $UTIL_TAG_DATE true
+}
+
+help_checkout() {
+	TEXT="\
+"
+	echo "$TEXT"
+}
+
+checkout() {
+	parent=`git config --local --get $BR_DEVELOP`
+	date_needed=`git config --local --get $UTIL_TAG_DATE`
+	if [ date_needed -eq "true" ]
+	then br_name="$(date +%y%m%d)_$1"
+	else br_name="$1"
+	fi
+
+	git checkout parent
+	git checkout -b br_name
+}
+
+if [ $# -lt 1 ]
+then
+	usage
+	exit 1
+fi
+
+action=$1
+shift
+
+case "$action" in
+"init")
+	# help_init
+	init "$@"
+;;
+"c" | "checkout")
+	checkout "$@"
+;;
+"p" | "push")
+;;
+"pr")
+	echo "pr"
+;;
+"m" | "merge")
+	echo "merge"
+;;
+"release")
+	echo "release"
+;;
+*)
+	echo "wrong action: $action"
+;;
+esac

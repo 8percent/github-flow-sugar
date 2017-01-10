@@ -74,11 +74,11 @@ checkout() {
 		br_name="$1"
 	fi
 
-	echo $parent
-	echo $date_needed
-	echo $br_name
-	#git checkout parent
-	#git checkout -b br_name
+	if [ $(git rev-parse HEAD) != $(git rev-parse $parent) ]
+	then
+		git checkout $parent
+	fi
+	git checkout -b $br_name
 }
 
 if [ $# -lt 1 ]

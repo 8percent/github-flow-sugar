@@ -24,8 +24,8 @@ init: 에잇퍼센트용 관리 도구를 설정합니다.
 }
 
 init() {
-	git rev-parse &> /dev/null
-	if [ $? -ne 0 ]
+	# repo check
+	if ! git rev-parse > /dev/null 2>&1
 	then
 		echo "should be git repo"
 		exit 2
@@ -34,6 +34,18 @@ init() {
 	git config --local $BR_MASTER master
 	git config --local $BR_DEVELOP develop
 	git config --local $UTIL_TAG_DATE true
+
+	if ! git rev-parse master -- > /dev/null 2>&1
+	then
+		git branch master
+	fi
+
+	if ! git rev-parse develop -- > /dev/null 2>&1
+	then
+		git branch develop
+	fi
+
+	git checkout develop
 }
 
 help_checkout() {
@@ -43,15 +55,30 @@ help_checkout() {
 }
 
 checkout() {
-	parent=`git config --local --get $BR_DEVELOP`
-	date_needed=`git config --local --get $UTIL_TAG_DATE`
-	if [ date_needed -eq "true" ]
-	then br_name="$(date +%y%m%d)_$1"
-	else br_name="$1"
+	parent=$(git config --local --get $BR_DEVELOP)
+
+	# parent existence check
+	
+	if ! git rev-parse $parent -- > /dev/null 2>&1
+	then
+		echo "develop branch not exists or repo not initialized"
+		exit 2
 	fi
 
-	git checkout parent
-	git checkout -b br_name
+	date_needed=$(git config --local --get $UTIL_TAG_DATE)
+
+	if $date_needed
+	then
+		br_name="$(date +%y%m%d)_$1"
+	else
+		br_name="$1"
+	fi
+
+	echo $parent
+	echo $date_needed
+	echo $br_name
+	#git checkout parent
+	#git checkout -b br_name
 }
 
 if [ $# -lt 1 ]

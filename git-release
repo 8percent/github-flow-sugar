@@ -24,7 +24,7 @@ fi
 # v/날짜/그날 배포 횟수/배포자
 
 TAG_NAME="v/$(date +%y%m%d)"
-USER=$(git config --global user.name)
+USER=$(git config user.name)
 RELEASE_NUM=1
 
 for TAG_NUM in $(git tag -l $TAG_NAME/* | awk -F'/' '{print $3}')

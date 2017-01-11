@@ -1,0 +1,19 @@
+#!/bin/bash
+
+BR_MASTER="master"
+
+if [ $# -ne 1 ]
+then
+  echo "usage: git feature FEATURE_NAME"
+  exit 1
+fi
+
+BRANCH_NAME="$(date +%y%m%d)_$1"
+
+
+if [ $(git rev-parse --abbrev-ref HEAD) != "$BR_MASTER" ]
+then
+  git checkout $BR_MASTER
+fi
+
+git checkout -b $BRANCH_NAME

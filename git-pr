@@ -1,0 +1,32 @@
+#!/bin/bash
+
+BR_MASTER="master"
+
+CURRENT=$(git rev-parse --abbrev-ref HEAD)
+
+STATUS=$(git branch -vv)
+
+if [[ $STATUS == *origin/$CURRENT* ]]
+then
+  if [ $(git rev-parse $CURRENT) != $(git rev-parse origin/$CURRENT) ]
+  then
+    git push origin $CURRENT
+  fi
+else
+  git push -u origin $CURRENT
+fi
+
+GITHUB_ID=$(git config --get remote.origin.url | sed -e 's/^[^:]*://' | sed -e 's/.git$//')
+URL="https://github.com/$GITHUB_ID/compare/$BR_MASTER...$CURRENT"
+
+case $(uname -s) in
+"Darwin")
+  open $URL
+;;
+"Linux")
+  xdg-open $URL
+*)
+  echo "Access link to compare and create pull request"
+  echo $URL
+;;
+esac

@@ -8,7 +8,10 @@ fi
 
 BR_MASTER="master"
 
-git checkout $BR_MASTER
+if [ $(git rev-parse --abbrev-ref HEAD) != $BR_MASTER ]
+then
+  git checkout $BR_MASTER
+fi
 
 # fast-forward 가 되는 경우에만 진행하자
 if ! git pull --ff-only
@@ -26,8 +29,10 @@ RELEASE_NUM=1
 
 for TAG_NUM in $(git tag -l $TAG_NAME/* | awk -F'/' '{print $3}')
 do
+  echo "$TAG_NUM"
   if [ $RELEASE_NUM -lt $TAG_NUM ]
   then
+
     RELEASE_NUM=$TAG_NUM
   fi
 done

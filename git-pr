@@ -25,6 +25,7 @@ case $(uname -s) in
 ;;
 "Linux")
   xdg-open $URL
+;;
 *)
   echo "Access link to compare and create pull request"
   echo $URL

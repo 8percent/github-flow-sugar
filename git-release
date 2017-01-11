@@ -2,7 +2,7 @@
 
 if [ $# -ne 0 ]
 then
-  echo "usage: git release"
+  echo "usage: $0"
   exit 1
 fi
 

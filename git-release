@@ -20,11 +20,11 @@ fi
 # release 형식
 # v/날짜/그날 배포 횟수/배포자
 
-TAG_NAME="v/$(date +%y%m%d)/"
+TAG_NAME="v/$(date +%y%m%d)"
 USER=$(git config --global user.name)
 RELEASE_NUM=1
 
-for TAG_NUM in $(git tag -l $TAG_NAME* | awk -F'/' '{print $3}')
+for TAG_NUM in $(git tag -l $TAG_NAME/* | awk -F'/' '{print $3}')
 do
   if [ $RELEASE_NUM -lt $TAG_NUM ]
   then
@@ -32,9 +32,14 @@ do
   fi
 done
 
-TAG_NAME="$TAG_NAME$RELEASE_NUM/$USER"
+TAG_NAME="$TAG_NAME/$RELEASE_NUM/$USER"
 
-git tag $TAG_NAME
+if ! git tag $TAG_NAME
+then
+  echo "Release name duplicated"
+  exit 2
+fi
+
 git push origin $TAG_NAME
 
 echo "New version released: $TAG_NAME"

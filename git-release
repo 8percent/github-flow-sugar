@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]
+then
+  echo "usage: git release"
+  exit 1
+fi
+
+BR_MASTER="master"
+
+git checkout $BR_MASTER
+
+# fast-forward 가 되는 경우에만 진행하자
+if ! git pull --ff-only
+then
+  echo "fast-forward로 $BR_MASTER 브랜치를 가져올 수 없습니다" >2
+  exit 2
+fi
+
+# release 형식
+# v/날짜/그날 배포 횟수/배포자
+
+TAG_NAME="v/$(date +%y%m%d)/"
+USER=$(git config --global user.name)
+RELEASE_NUM=1
+
+for TAG_NUM in $(git tag -l $TAG_NAME* awk -F'/' '{print $3}')
+do
+  if [ $RELEASE_NUM -lt $TAG_NUM ]
+  then
+    RELEASE_NUM=$TAG_NUM
+  fi
+done
+
+TAG_NAME="$TAG_NAME$RELEASE_NUM/$USER"
+
+git tag $TAG_NAME
+git push origin $TAG_NAME
+
+echo "New version released: $TAG_NAME"

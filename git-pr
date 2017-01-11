@@ -1,13 +1,22 @@
 #!/bin/bash
 
+if [ $# -ne 0 ]
+then
+  echo "usage: git pr"
+  exit 1
+fi
+
 BR_MASTER="master"
 
 CURRENT=$(git rev-parse --abbrev-ref HEAD)
 
 STATUS=$(git branch -vv)
 
+# push를 해봅시다
+# tracking이 되는지 확인
 if [[ $STATUS == *origin/$CURRENT* ]]
 then
+  # 이미 push가 되었는지 확인
   if [ $(git rev-parse $CURRENT) != $(git rev-parse origin/$CURRENT) ]
   then
     git push origin $CURRENT
@@ -15,6 +24,8 @@ then
 else
   git push -u origin $CURRENT
 fi
+
+# Compare url 만들고 브라우저로 열기
 
 GITHUB_ID=$(git config --get remote.origin.url | sed -e 's/^[^:]*://' | sed -e 's/.git$//')
 URL="https://github.com/$GITHUB_ID/compare/$BR_MASTER...$CURRENT"

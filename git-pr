@@ -2,7 +2,7 @@
 
 if [ $# -ne 0 ]
 then
-  echo "usage: git pr"
+  echo "usage: $0"
   exit 1
 fi
 
@@ -23,6 +23,12 @@ then
   fi
 else
   git push -u origin $CURRENT
+fi
+
+if [ $? -ne 0 ]
+then
+  echo "Push failed"
+  exit 1
 fi
 
 # Compare url 만들고 브라우저로 열기

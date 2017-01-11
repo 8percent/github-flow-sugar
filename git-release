@@ -29,11 +29,9 @@ RELEASE_NUM=1
 
 for TAG_NUM in $(git tag -l $TAG_NAME/* | awk -F'/' '{print $3}')
 do
-  echo "$TAG_NUM"
-  if [ $RELEASE_NUM -lt $TAG_NUM ]
+  if [ $RELEASE_NUM -le $TAG_NUM ]
   then
-
-    RELEASE_NUM=$TAG_NUM
+    RELEASE_NUM=$(($TAG_NUM + 1))
   fi
 done
 

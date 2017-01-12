@@ -4,7 +4,7 @@ BR_MASTER="master"
 
 if [ $# -ne 1 ]
 then
-  echo "usage: git feature FEATURE_NAME"
+  echo "usage: $0 FEATURE_NAME"
   exit 1
 fi
 

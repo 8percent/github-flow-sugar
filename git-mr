@@ -37,7 +37,7 @@ if [ $? -ne 0 ]
 then
 	exit 2
 fi
-git push ":$BRANCH_NAME"
+git push origin ":$BRANCH_NAME"
 if [ $? -ne 0 ]
 then
 	exit 2

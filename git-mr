@@ -1,0 +1,51 @@
+#!/bin/bash
+
+BR_MASTER="master"
+
+if [ $# -ne 1 ]
+then
+  echo "usage: $0"
+  exit 1
+fi
+
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+
+
+if [ "$BRANCH_NAME" == "$BR_MASTER" ]
+then
+	echo "You are on branch $BR_MASTER."
+	exit 1
+fi
+
+git checkout $BR_MASTER
+git fetch
+
+if [ $(git rev-parse $BRANCH_NAME) != $(git rev-parse origin/$BRANCH_NAME) ]
+then
+	echo "$BRANCH_NAME is not updated to the latest revision."
+	exit 1
+fi
+
+if [ $(git rev-parse $BR_MASTER) != $(git rev-parse origin/$BR_MASTER) ]
+then
+	echo "$BR_MASTER is not updated to the latest revision."
+	exit 1
+fi
+
+git merge "$BRANCH_NAME" --no-ff
+if [ $? -ne 0 ]
+then
+	exit 2
+fi
+git push ":$BRANCH_NAME"
+if [ $? -ne 0 ]
+then
+	exit 2
+fi
+git branch -d "$BRANCH_NAME"
+if [ $? -ne 0 ]
+then
+	exit 2
+fi
+
+echo "$BRANCH_NAME is merged to $BR_MASTER. Please push to update remote"

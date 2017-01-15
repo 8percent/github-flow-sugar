@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]
+then
+  echo "usage: $0"
+  exit 1
+fi
+
+BR_MASTER="master"
+
+CURRENT=$(git rev-parse --abbrev-ref HEAD)
+
+STATUS=$(git branch -vv)
+
+# push를 해봅시다
+# tracking이 되는지 확인
+if [[ $STATUS == *origin/$CURRENT* ]]
+then
+  # 이미 push가 되었는지 확인
+  if [ $(git rev-parse $CURRENT) != $(git rev-parse origin/$CURRENT) ]
+  then
+    git push origin $CURRENT
+  fi
+else
+  git push -u origin $CURRENT
+fi
+
+if [ $? -ne 0 ]
+then
+  echo "Push failed"
+  exit 1
+fi

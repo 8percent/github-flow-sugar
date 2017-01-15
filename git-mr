@@ -2,7 +2,7 @@
 
 BR_MASTER="master"
 
-if [ $# -ne 1 ]
+if [ $# -ne 0 ]
 then
   echo "usage: $0"
   exit 1

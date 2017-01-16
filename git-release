@@ -2,7 +2,7 @@
 
 if [ $# -ne 0 ]
 then
-  echo "usage: $0"
+  echo "usage: $(basename $0)"
   exit 1
 fi
 
